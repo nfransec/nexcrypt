@@ -186,14 +186,15 @@ export default function HomePage() {
                 >
                   <Copy className="h-5 w-5" />
                 </button>
-                <button onClick={() => setDecryptedMessage('')}><Trash2 className="h-5 w-5 text-white" /></button>
+                
               </div>
-              <div className="h-[300px] overflow-auto text-gray-300">
+              <div className="min-h-[200px] overflow-auto text-gray-300">
                 <p className="whitespace-pre-wrap">{decryptedMessage}</p>
               </div>
+              <button onClick={() => setDecryptedMessage('')}><Trash2 className="h-5 w-5 text-white hover:text-red-500" /></button>
             </div>
           ) : (
-            <div className='min-h-[300px] flex items-center justify-center text-blue-800'>
+            <div className='min-h-[150px] bg-gray-900  rounded-lg flex items-center justify-center text-blue-800'>
               Decrypted message will appear here...
             </div>
           )}
