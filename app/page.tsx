@@ -74,8 +74,6 @@ export default function HomePage() {
     return `-----BEGIN PGP PRIVATE KEY BLOCK-----\n\n${pKey}\n\n-----END PGP PRIVATE KEY BLOCK-----`
   }
 
-  const finalKey = fetchKey();
-
   useEffect(() => {
     const storedHistory = localStorage.getItem('decryptionHistory');
     if (!storedHistory) {
@@ -234,16 +232,6 @@ export default function HomePage() {
             <div className='mt-8 min-h-[300px] flex items-center bg-gray-900 justify-center text-blue-800 rounded-lg'>
               Decrypted message will appear here...
             </div>
-          )}
-
-          {finalKey ? (
-            <div className='bg-gray-900 p-6 rounded-lg border border-gray-700 mt-8 relative'>
-            <div className="h-[300px] overflow-auto text-gray-300">
-              <p className="whitespace-pre-wrap">{finalKey}</p>
-            </div>
-          </div>
-          ) : (
-            <div>NoKEY</div>
           )}
         </section>
       </div>
