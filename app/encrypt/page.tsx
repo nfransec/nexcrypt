@@ -36,7 +36,7 @@ export default function EncryptPage() {
   return (
     <main>
         <div className="min-h-screen">
-        <section className='container mx-auto py-20 text-center'>
+        <section className='container mx-auto py-20 text-center mt-8'>
         <h1 className="text-6xl sm:text-7xl lg:text-8xl font-extrabold gradient-title pb-6 flex flex-col mb-10">
             Encrypt Message
         </h1>

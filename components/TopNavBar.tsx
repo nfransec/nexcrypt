@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
 import { useAuthenticator } from "@aws-amplify/ui-react"
+import Link from "next/link"
 
 export default function Component() {
   const [isSearchVisible, setIsSearchVisible] = React.useState(false)
@@ -20,8 +21,8 @@ export default function Component() {
 
   return (
     <div className="fixed left-1/2 transform -translate-x-1/2 top-4 z-50 w-[500px] sm:w-[650px] md:w-[900px] lg:w-[1000px] xl:w-[1200px] rounded-xl">
-      <div className="rounded-lg bg-zinc-900/95 px-4 py-3 shadow-xl backdrop-blur supports-[backdrop-filter]:bg-zinc-900/80">
-        <div className="flex items-center gap-4">
+      <div className="rounded-xl bg-gray-900/95 px-4 py-3 shadow-xl backdrop-blur supports-[backdrop-filter]:bg-gray-900/80">
+        <div className="flex items-center gap-6">
           <div className="flex items-center gap-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-900 text-white border border-gray-200">
               <span className="text-xl font-bold">
@@ -31,26 +32,26 @@ export default function Component() {
             <span className="text-lg font-semibold text-white">NexCrypt</span>
           </div>
           
-          <nav className="hidden md:flex md:gap-2">
-            <Button variant="ghost" size="sm" className="text-zinc-400 hover:text-gray-900">
+          <nav className="flex gap-4">
+            <Link href="/encrypt" className="flex items-center text-zinc-400 hover:text-blue-500 text-sm">
               <Shield className="mr-2 h-4 w-4" />
               Encrypt
-            </Button>
-            <Button variant="ghost" size="sm" className="text-zinc-400 hover:text-gray-900">
+            </Link>
+            <Link href="/" className="flex items-center text-zinc-400 hover:text-blue-500 text-sm">
               <Key className="mr-2 h-4 w-4" />
               Decrypt
-            </Button>
+            </Link>
           </nav>
 
           <div className="ml-auto flex items-center gap-4">
 
-            <Button variant="ghost" size="icon" className="text-zinc-400 hover:text-gray-900">
+            {/* <Button variant="ghost" size="icon" className="text-zinc-400 hover:text-gray-900">
               <Moon className="h-5 w-5" />
             </Button>
             
             <Button variant="ghost" size="icon" className="text-zinc-400 hover:text-gray-900">
               <Bell className="h-5 w-5" />
-            </Button>
+            </Button> */}
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -67,7 +68,7 @@ export default function Component() {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem>
+                <DropdownMenuItem className="p-0">
                     <Button variant='ghost' onClick={signOut}>
                         <div className="flex flex-row items-center gap-1 font-bold">
                             <LogOut className="h-4 w-4 text-red-600" />

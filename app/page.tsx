@@ -105,18 +105,26 @@ export default function HomePage() {
   };
 
   const handleDecrypt = async (content: string, type: 'text' | 'file', filename?: string) => {
+
+    setError(null);
+
+    if(!content) {
+      setError('Input seems EMPTY!!! Enter a valid PGP encrypted text!');
+      return;
+    }
+
     try {
+      await openpgp.readMessage({
+        armoredMessage: content,
+      });
+
       const privateKeyArmored = fetchKey();
 
       if(!privateKeyArmored || typeof privateKeyArmored !== 'string') {
         throw new Error('Private key not found or is not a valid string');
       }
-      // const privateKeyArmored = process.env.NEXT_PUBLIC_PRIVATE_KEY;
+    
       const passphrase = process.env.NEXT_PUBLIC_PASSPHRASE;
-
-      // if (!privateKeyArmored || !passphrase) {
-      //   throw new Error('Private key or passphrase not found');
-      // }
 
       const privateKey = await openpgp.decryptKey({
         privateKey: await openpgp.readPrivateKey({ armoredKey: privateKeyArmored }),
@@ -138,7 +146,22 @@ export default function HomePage() {
       updateHistory(content, decryptedString, type, filename);
     } catch (err) {
       console.error('Decryption Error: ', err);
-      setError('Decryption failed');
+      let errorMessage = 'oops! something went wrong, try again!';
+
+      if (err instanceof Error) {
+        errorMessage = err.message;
+      } else if (typeof err === 'string') {
+        errorMessage = err;
+      }
+
+      if (errorMessage.includes('not a valid PGP message')) {
+        setError('Enter a valid PGP encrypted text.');
+      } else if (errorMessage.includes('Misformed armored text')) {
+        setError('Enter a valid input in PGP format');
+      } else {
+        setError('Decryption failed: ' + errorMessage);
+      }
+
     }
   };
 
@@ -148,7 +171,7 @@ export default function HomePage() {
     <main>
       {/* Main content */}
       <div className='min-h-screen flex'>
-        <section className='flex-1 container mx-auto py-20 text-center mt-10'>
+        <section className='flex-1 container mx-auto py-20 text-center mt-8'>
           <h1 className='text-6xl sm:text-7xl lg:text-8xl font-extrabold gradient-title pb-6 flex flex-col'>
             CSIRT PGP Toolkit
           </h1>
@@ -201,6 +224,7 @@ export default function HomePage() {
           
           {decryptedMessage ? (
             <div className='bg-gray-900 p-6 rounded-lg border border-gray-700 mt-8 relative'>
+              <h2 className="text-blue-500 mb-2">----------------------- Decrypted Message -----------------------</h2>
               <div className='absolute top-3 right-3 flex space-x-2'>
                 <button
                   onClick={() => navigator.clipboard.writeText(decryptedMessage)}
@@ -211,14 +235,12 @@ export default function HomePage() {
                 </button>
                 <button onClick={() => setDecryptedMessage('')}><Trash2 className="h-5 w-5 text-white" /></button>
               </div>
-              <div className="h-[300px] overflow-auto text-gray-300">
+              <div className="h-auto overflow-auto text-gray-300">
                 <p className="whitespace-pre-wrap">{decryptedMessage}</p>
               </div>
             </div>
           ) : (
-            <div className='mt-8 min-h-[300px] flex items-center bg-gray-900 justify-center text-blue-800 rounded-lg'>
-              Decrypted message will appear here...
-            </div>
+            <></>
           )}
         </section>
       </div>
