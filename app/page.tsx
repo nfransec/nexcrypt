@@ -73,17 +73,19 @@ export default function HomePage() {
     localStorage.setItem('decryptionHistory', JSON.stringify(history));
   };
 
-  const handleFileUpload = (uploadedFiles: File[]) => {
-    const file = uploadedFiles[0];
-    if (file && /\.(txt|eml|pgp)$/i.test(file.name)) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const content = reader.result as string;
-        setEncryptedMessage(content);
-      };
-      reader.readAsText(file);
-    } else {
-      setError('Please upload a valid .txt, .eml, or .pgp file');
+  const handleFileUpload = (uploadedFiles: File[] | null) => {
+    if (uploadedFiles && uploadedFiles.length > 0) {
+      const file = uploadedFiles[0];
+      if (file && /\.(txt|eml|pgp)$/i.test(file.name)) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const content = reader.result as string;
+          setEncryptedMessage(content);
+        };
+        reader.readAsText(file);
+      } else {
+        setError('Please upload a valid .txt, .eml, or .pgp file');
+      }
     }
   };
 
@@ -137,14 +139,19 @@ export default function HomePage() {
             onChange={(e) => setEncryptedMessage(e.target.value)}
             placeholder="Enter text to decrypt..."
           />
-          
+          <Button size="lg" className="mr-2 mt-4 mb-8" variant='destructive'
+            onClick={() => handleDecrypt(encryptedMessage, 'text')}
+          >
+            Decrypt <Key className='w-4 h-4' />
+          </Button>
+
           <FileUploader
             value={files}
             onValueChange={handleFileUpload}
             dropzoneOptions={dropZoneConfig}
             className="relative bg-gray-800 rounded-lg p-1"
           >
-            <FileInput className='outline-dashed outline-1 outline-white bg-gray-900'>
+            <FileInput className='outline-dashed outline-1 outline-white bg-gray-800'>
               <div className="flex items-center justify-center flex-col pt-3 pb-4 w-full">
                 <FileSvgDraw />
               </div>
@@ -161,13 +168,6 @@ export default function HomePage() {
               }
             </FileUploaderContent>
           </FileUploader>
-
-          <Button size="lg" className="mr-2 mt-4 mb-8" variant='destructive'
-            onClick={() => handleDecrypt(encryptedMessage, 'text')}
-          >
-            Decrypt <Key className='w-4 h-4' />
-          </Button>
-
 
           {error && (
             <Alert variant="destructive" className="mt-4 mb-4">
@@ -186,15 +186,14 @@ export default function HomePage() {
                 >
                   <Copy className="h-5 w-5" />
                 </button>
-                
+                <button onClick={() => setDecryptedMessage('')}><Trash2 className="h-5 w-5 text-white" /></button>
               </div>
-              <div className="min-h-[200px] overflow-auto text-gray-300">
+              <div className="h-[300px] overflow-auto text-gray-300">
                 <p className="whitespace-pre-wrap">{decryptedMessage}</p>
               </div>
-              <button onClick={() => setDecryptedMessage('')}><Trash2 className="h-5 w-5 text-white hover:text-red-500" /></button>
             </div>
           ) : (
-            <div className='min-h-[150px] bg-gray-900  rounded-lg flex items-center justify-center text-blue-800'>
+            <div className='min-h-[300px] flex items-center justify-center text-blue-800'>
               Decrypted message will appear here...
             </div>
           )}
