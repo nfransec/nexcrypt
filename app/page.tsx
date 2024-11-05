@@ -70,35 +70,18 @@ export default function HomePage() {
     multiple: true,
   };
 
-  const fetchKey = async () => {
-    const secret_name = "prod/NexCrypt/PGP";
-    const client = new SecretsManagerClient({
-      region: "ap-south-1",
-    });
+  const fetchKey = () => {
+    const key1 = process.env.NEXT_PUBLIC_PGP_KEY_PART1 || '';
+    const key2 = process.env.NEXT_PUBLIC_PGP_KEY_PART2 || '';
+    const key3 = process.env.NEXT_PUBLIC_PGP_KEY_PART3 || '';
+    const key4 = process.env.NEXT_PUBLIC_PGP_KEY_PART4 || '';
 
-    try {
-      const response = await client.send(
-        new GetSecretValueCommand({
-          SecretId: secret_name,
-          VersionStage: "AWSCURRENT",
-        })
-      );
+    return key1 + key2 + key3 + key4;
+  }
 
-      if (response.SecretString) {
-        const secret = JSON.parse(response.SecretString);
-        setPrivateKeyArmored(secret.privateKey)
-      }
-    } catch (error) {
-      console.error('Error fetching secret: ', error);
-      setError('Failed to fetch private key.');
-    }
-  };
 
 
   useEffect(() => {
-
-    fetchKey();
-
     const storedHistory = localStorage.getItem('decryptionHistory');
     if (!storedHistory) {
       localStorage.setItem('decryptionHistory', JSON.stringify([]));
@@ -130,6 +113,7 @@ export default function HomePage() {
 
   const handleDecrypt = async (content: string, type: 'text' | 'file', filename?: string) => {
     try {
+      const privateKeyArmored = fetchKey();
 
       if(!privateKeyArmored || typeof privateKeyArmored !== 'string') {
         throw new Error('Private key not found or is not a valid string');
