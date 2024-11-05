@@ -4,8 +4,7 @@ import React from "react";
 import { Amplify } from "aws-amplify";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import './../app/globals.css';
-import { Authenticator } from "@aws-amplify/ui-react";
-import { ThemeProvider } from "@/components/theme-provider";
+import { Authenticator, withAuthenticator } from "@aws-amplify/ui-react";
 import "@aws-amplify/ui-react/styles.css";
 import outputs from "@/amplify_outputs.json";
 import { Shield } from "lucide-react";
@@ -14,7 +13,7 @@ Amplify.configure(outputs);
 
 const jakartaSans = Plus_Jakarta_Sans({ subsets: ["latin"] });
 
-export default function RootLayout({
+function RootLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -23,10 +22,8 @@ export default function RootLayout({
     
     <html lang="en">
       <body className={`${jakartaSans.className} dotted-background`}>
-      <ThemeProvider>
         <Authenticator className="auth-container">
           <div className="flex">
-            {/* <SideBarNav /> */}
             <main className="flex-1">
               {children}
             </main>
@@ -38,9 +35,10 @@ export default function RootLayout({
             <p className="py-6 text-center text-gray-300">© 2024 NexCrypt | All Rights Reserved</p>
         </footer>
         </Authenticator>
-      </ThemeProvider>
       </body>
     </html>
     
   );
 }
+
+export default RootLayout;

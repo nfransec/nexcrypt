@@ -16,8 +16,14 @@ import {
 } from '@/components/custom-file-uploader';
 import { Paperclip } from "lucide-react";
 import * as openpgp from 'openpgp';
+import {
+  SecretsManagerClient,
+  GetSecretValueCommand,
+} from "@aws-sdk/client-secrets-manager";
+
 
 Amplify.configure(outputs);
+
 
 const FileSvgDraw = () => {
   return (
@@ -53,14 +59,39 @@ export default function HomePage() {
   const [decryptedMessage, setDecryptedMessage] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [files, setFiles] = useState<File[]>([]);
+  const [secretKey, setSecretKey] = useState<string | null>(null);
 
   const { signOut, user } = useAuthenticator();
+  
 
   const dropZoneConfig = {
     maxFiles: 5,
     maxSize: 1024 * 1024 * 4,
     multiple: true,
   };
+
+  const fetchKey = async () => {
+    const secret_name = "prod/NexCrypt/PGP";
+
+      const client = new SecretsManagerClient({
+        region: "ap-south-1",
+      });
+
+      let response;
+
+    try {
+      response = await client.send(
+        new GetSecretValueCommand({
+          SecretId: secret_name,
+          VersionStage: "AWSCURRENT",
+        })
+      );
+    } catch (error) {
+    throw error;
+    }
+    const secret = response.SecretString;
+    return secret;
+  }
 
   useEffect(() => {
     const storedHistory = localStorage.getItem('decryptionHistory');
@@ -94,7 +125,7 @@ export default function HomePage() {
 
   const handleDecrypt = async (content: string, type: 'text' | 'file', filename?: string) => {
     try {
-      const privateKeyArmored = process.env.NEXT_PUBLIC_PRIVATE_KEY;
+      const privateKeyArmored = process.env.NEXT_PUBLIC_PRIVATE_KEY || {secKey};
       const passphrase = process.env.NEXT_PUBLIC_PASSPHRASE;
 
       if (!privateKeyArmored || !passphrase) {
@@ -125,6 +156,7 @@ export default function HomePage() {
     }
   };
 
+  const secKey = fetchKey();
 
   return (
     <main>
@@ -144,7 +176,7 @@ export default function HomePage() {
             CSIRT PGP Toolkit
           </h1>
           <p className='text-lg text-gray-400 mb-10 max-w-3xl mx-auto'>
-            Securely encrypt and decrypt emails/messages with ease using our powerful PGP toolkit.
+            Securely decrypt emails/messages with ease using our powerful PGP toolkit.
           </p>
 
           <textarea 
@@ -207,7 +239,7 @@ export default function HomePage() {
               </div>
             </div>
           ) : (
-            <div className='min-h-[300px] flex items-center justify-center text-blue-800'>
+            <div className='mt-8 min-h-[300px] flex items-center bg-gray-900 justify-center text-blue-800 rounded-lg'>
               Decrypted message will appear here...
             </div>
           )}
