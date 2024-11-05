@@ -8,6 +8,7 @@ import { Authenticator, withAuthenticator } from "@aws-amplify/ui-react";
 import "@aws-amplify/ui-react/styles.css";
 import outputs from "@/amplify_outputs.json";
 import { Shield } from "lucide-react";
+import TopNavBar from "@/components/TopNavBar";
 
 Amplify.configure(outputs);
 
@@ -23,7 +24,8 @@ function RootLayout({
     <html lang="en">
       <body className={`${jakartaSans.className} dotted-background`}>
         <Authenticator className="auth-container">
-          <div className="flex">
+          <div className="flex flex-col">
+            <TopNavBar />
             <main className="flex-1">
               {children}
             </main>

@@ -146,22 +146,9 @@ export default function HomePage() {
 
   return (
     <main>
-
-      {/* Top Nav */}
-      <div className="flex flex-row items-center justify-between p-6">
-        {user && (
-          <h2 className="text-2xl text-white">
-            Welcome, <span className="text-emerald-600">{user.signInDetails?.loginId}!</span>
-          </h2>
-        )}
-        <Button onClick={signOut} className="mt-4 mb-4 flex absolute right-3" variant='destructive'>
-          <LogOut className="w-4 h-4" />Sign Out
-        </Button>
-      </div>
-
       {/* Main content */}
-      <div className='min-h-screen'>
-        <section className='container mx-auto py-20 text-center'>
+      <div className='min-h-screen flex'>
+        <section className='flex-1 container mx-auto py-20 text-center mt-10'>
           <h1 className='text-6xl sm:text-7xl lg:text-8xl font-extrabold gradient-title pb-6 flex flex-col'>
             CSIRT PGP Toolkit
           </h1>
@@ -185,9 +172,9 @@ export default function HomePage() {
             value={files}
             onValueChange={handleFileUpload}
             dropzoneOptions={dropZoneConfig}
-            className="relative bg-gray-800 rounded-lg p-1"
+            className="relative bg-gray-900 rounded-lg p-1"
           >
-            <FileInput className='outline-dashed outline-1 outline-white bg-gray-800'>
+            <FileInput className='outline-dashed outline-1 outline-white bg-gray-900'>
               <div className="flex items-center justify-center flex-col pt-3 pb-4 w-full">
                 <FileSvgDraw />
               </div>
