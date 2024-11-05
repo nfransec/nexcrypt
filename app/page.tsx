@@ -59,8 +59,8 @@ export default function HomePage() {
   const [decryptedMessage, setDecryptedMessage] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [files, setFiles] = useState<File[]>([]);
+  const [privateKeyArmored, setPrivateKeyArmored] = useState<string | null>(null);
   const [secretKey, setSecretKey] = useState<string | null>(null);
-
   const { signOut, user } = useAuthenticator();
   
 
@@ -72,28 +72,33 @@ export default function HomePage() {
 
   const fetchKey = async () => {
     const secret_name = "prod/NexCrypt/PGP";
-
-      const client = new SecretsManagerClient({
-        region: "ap-south-1",
-      });
-
-      let response;
+    const client = new SecretsManagerClient({
+      region: "ap-south-1",
+    });
 
     try {
-      response = await client.send(
+      const response = await client.send(
         new GetSecretValueCommand({
           SecretId: secret_name,
           VersionStage: "AWSCURRENT",
         })
       );
+
+      if (response.SecretString) {
+        const secret = JSON.parse(response.SecretString);
+        setPrivateKeyArmored(secret.privateKey)
+      }
     } catch (error) {
-    throw error;
+      console.error('Error fetching secret: ', error);
+      setError('Failed to fetch private key.');
     }
-    const secret = response.SecretString;
-    return secret;
-  }
+  };
+
 
   useEffect(() => {
+
+    fetchKey();
+
     const storedHistory = localStorage.getItem('decryptionHistory');
     if (!storedHistory) {
       localStorage.setItem('decryptionHistory', JSON.stringify([]));
@@ -125,12 +130,16 @@ export default function HomePage() {
 
   const handleDecrypt = async (content: string, type: 'text' | 'file', filename?: string) => {
     try {
-      const privateKeyArmored = process.env.NEXT_PUBLIC_PRIVATE_KEY || {secKey};
+
+      if(!privateKeyArmored || typeof privateKeyArmored !== 'string') {
+        throw new Error('Private key not found or is not a valid string');
+      }
+      // const privateKeyArmored = process.env.NEXT_PUBLIC_PRIVATE_KEY;
       const passphrase = process.env.NEXT_PUBLIC_PASSPHRASE;
 
-      if (!privateKeyArmored || !passphrase) {
-        throw new Error('Private key or passphrase not found');
-      }
+      // if (!privateKeyArmored || !passphrase) {
+      //   throw new Error('Private key or passphrase not found');
+      // }
 
       const privateKey = await openpgp.decryptKey({
         privateKey: await openpgp.readPrivateKey({ armoredKey: privateKeyArmored }),
@@ -156,7 +165,7 @@ export default function HomePage() {
     }
   };
 
-  const secKey = fetchKey();
+
 
   return (
     <main>
