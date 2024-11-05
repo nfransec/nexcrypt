@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Amplify, } from "aws-amplify";
-import { useAuthenticator, UseAuthenticator } from "@aws-amplify/ui-react";
+import { useAuthenticator } from "@aws-amplify/ui-react";
 import outputs from "@/amplify_outputs.json";
 import "@aws-amplify/ui-react/styles.css";
 import { Button } from "@/components/ui/button";
@@ -16,10 +16,6 @@ import {
 } from '@/components/custom-file-uploader';
 import { Paperclip } from "lucide-react";
 import * as openpgp from 'openpgp';
-import {
-  SecretsManagerClient,
-  GetSecretValueCommand,
-} from "@aws-sdk/client-secrets-manager";
 
 
 Amplify.configure(outputs);
@@ -59,8 +55,6 @@ export default function HomePage() {
   const [decryptedMessage, setDecryptedMessage] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [files, setFiles] = useState<File[]>([]);
-  const [privateKeyArmored, setPrivateKeyArmored] = useState<string | null>(null);
-  const [secretKey, setSecretKey] = useState<string | null>(null);
   const { signOut, user } = useAuthenticator();
   
 
@@ -75,11 +69,12 @@ export default function HomePage() {
     const key2 = process.env.NEXT_PUBLIC_PGP_KEY_PART2 || '';
     const key3 = process.env.NEXT_PUBLIC_PGP_KEY_PART3 || '';
     const key4 = process.env.NEXT_PUBLIC_PGP_KEY_PART4 || '';
+    const pKey = key1 + key2 + key3 + key4
 
-    return key1 + key2 + key3 + key4;
+    return `-----BEGIN PGP PRIVATE KEY BLOCK-----\n\n${pKey}\n\n-----END PGP PRIVATE KEY BLOCK-----`
   }
 
-
+  const finalKey = fetchKey();
 
   useEffect(() => {
     const storedHistory = localStorage.getItem('decryptionHistory');
@@ -153,6 +148,8 @@ export default function HomePage() {
 
   return (
     <main>
+
+      {/* Top Nav */}
       <div className="flex flex-row items-center justify-between p-6">
         {user && (
           <h2 className="text-2xl text-white">
@@ -163,6 +160,8 @@ export default function HomePage() {
           <LogOut className="w-4 h-4" />Sign Out
         </Button>
       </div>
+
+      {/* Main content */}
       <div className='min-h-screen'>
         <section className='container mx-auto py-20 text-center'>
           <h1 className='text-6xl sm:text-7xl lg:text-8xl font-extrabold gradient-title pb-6 flex flex-col'>
@@ -235,6 +234,16 @@ export default function HomePage() {
             <div className='mt-8 min-h-[300px] flex items-center bg-gray-900 justify-center text-blue-800 rounded-lg'>
               Decrypted message will appear here...
             </div>
+          )}
+
+          {finalKey ? (
+            <div className='bg-gray-900 p-6 rounded-lg border border-gray-700 mt-8 relative'>
+            <div className="h-[300px] overflow-auto text-gray-300">
+              <p className="whitespace-pre-wrap">{finalKey}</p>
+            </div>
+          </div>
+          ) : (
+            <div>NoKEY</div>
           )}
         </section>
       </div>
