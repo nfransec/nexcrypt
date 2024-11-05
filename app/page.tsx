@@ -1,11 +1,12 @@
 'use client';
 
 import { useState, useEffect } from "react";
-import { Amplify } from "aws-amplify";
+import { Amplify, } from "aws-amplify";
+import { useAuthenticator, UseAuthenticator } from "@aws-amplify/ui-react";
 import outputs from "@/amplify_outputs.json";
 import "@aws-amplify/ui-react/styles.css";
 import { Button } from "@/components/ui/button";
-import { Copy, Key, Trash2 } from "lucide-react";
+import { Copy, Key, LogOut, Trash2 } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
   FileUploader,
@@ -52,6 +53,8 @@ export default function HomePage() {
   const [decryptedMessage, setDecryptedMessage] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [files, setFiles] = useState<File[]>([]);
+
+  const { signOut, user } = useAuthenticator();
 
   const dropZoneConfig = {
     maxFiles: 5,
@@ -122,8 +125,19 @@ export default function HomePage() {
     }
   };
 
+
   return (
     <main>
+      <div className="flex flex-row items-center justify-between p-6">
+        {user && (
+          <h2 className="text-2xl text-white">
+            Welcome, <span className="text-emerald-600">{user.signInDetails?.loginId}!</span>
+          </h2>
+        )}
+        <Button onClick={signOut} className="mt-4 mb-4 flex absolute right-3" variant='destructive'>
+          <LogOut className="w-4 h-4" />Sign Out
+        </Button>
+      </div>
       <div className='min-h-screen'>
         <section className='container mx-auto py-20 text-center'>
           <h1 className='text-6xl sm:text-7xl lg:text-8xl font-extrabold gradient-title pb-6 flex flex-col'>
@@ -139,7 +153,7 @@ export default function HomePage() {
             onChange={(e) => setEncryptedMessage(e.target.value)}
             placeholder="Enter text to decrypt..."
           />
-          <Button size="lg" className="mr-2 mt-4 mb-8" variant='destructive'
+          <Button size="lg" className="mr-2 mt-4 mb-8" variant='outline'
             onClick={() => handleDecrypt(encryptedMessage, 'text')}
           >
             Decrypt <Key className='w-4 h-4' />

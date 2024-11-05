@@ -124,7 +124,13 @@ a {
   .gradient-title {
     @apply font-extrabold bg-gradient-to-br from-blue-500 via-blue-100 to-blue-400 bg-clip-text tracking-tighter text-transparent pr-2 pb-2;
   }
+
+  .auth-container {
+    @apply flex justify-center items-center min-h-screen bg-[#0a111f];
+  }
+
 }
+
 
 .dotted-background {
   background-color: #0a111f;
@@ -132,3 +138,30 @@ a {
   background-size: 30px 30px;
 }
 
+
+
+.auth-container .amplify-authenticator {
+  background-color: #2c2c2c; /* Darker background for the form */
+  border-radius: 8px;
+  padding: 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.authenticator-container .amplify-authenticator h2 {
+  color: #ffffff; /* White text for the title */
+}
+
+.auth-container .amplify-authenticator input {
+  background-color: #3a3a3a; /* Input background */
+  color: #ffffff; /* Input text color */
+  border: 1px solid #555; /* Input border */
+}
+
+.auth-container .amplify-authenticator button {
+  background-color: #4a90e2; /* Button background */
+  color: #ffffff; /* Button text color */
+}
+
+.auth-container .amplify-authenticator button:hover {
+  background-color: #357ab8; /* Button hover color */
+}

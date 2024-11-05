@@ -24,7 +24,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${jakartaSans.className} dotted-background`}>
       <ThemeProvider>
-        <Authenticator>
+        <Authenticator className="auth-container">
           <div className="flex">
             {/* <SideBarNav /> */}
             <main className="flex-1">
