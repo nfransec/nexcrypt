@@ -15,6 +15,31 @@ Amplify.configure(outputs);
 
 const jakartaSans = Plus_Jakarta_Sans({ subsets: ["latin"] });
 
+// https://ui.docs.amplify.aws/react/connected-components/authenticator/customization
+const formFields = {
+  signUp: {
+    email: {
+      order:2
+    },
+    given_name: {
+      placeholder: 'Enter your Full name',
+      label: 'Full Name',
+      order:1
+    },
+    password: {
+      order:3
+    },
+    confirm_password: {
+      order:4
+    },
+    // phone_number: {
+    //   order:5,
+    //   dialCode: '+91',
+    // },
+  },
+}
+
+
 function RootLayout({
   children,
 }: {
@@ -24,7 +49,10 @@ function RootLayout({
     
     <html lang="en">
       <body className={`${jakartaSans.className} dotted-background`}>
-        <Authenticator className="auth-container">
+        <Authenticator 
+          className="auth-container"
+          formFields={formFields}
+        >
           <div className="flex">
             <TopNavBar />
             {/* <SideBarNav /> */}

@@ -6,7 +6,7 @@ import { useAuthenticator } from "@aws-amplify/ui-react";
 import outputs from "@/amplify_outputs.json";
 import "@aws-amplify/ui-react/styles.css";
 import { Button } from "@/components/ui/button";
-import { Copy, Key, LogOut, Trash2 } from "lucide-react";
+import { Copy, Download, Key, Trash2 } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
   FileUploader,
@@ -59,7 +59,7 @@ export default function HomePage() {
   
 
   const dropZoneConfig = {
-    maxFiles: 5,
+    maxFiles: 3,
     maxSize: 1024 * 1024 * 4,
     multiple: true,
   };
@@ -165,7 +165,15 @@ export default function HomePage() {
     }
   };
 
-
+  const triggerDownload = () => {
+    const blob = new Blob([decryptedMessage], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'DecryptedMessage.txt';
+    a.click();
+    URL.revokeObjectURL(url);
+  }
 
   return (
     <main>
@@ -179,23 +187,19 @@ export default function HomePage() {
             Securely decrypt emails/messages with ease using our powerful PGP toolkit.
           </p>
 
-          <textarea 
+          {/* <textarea 
             className='w-full p-3 mb-4 rounded-md border border-gray-700 bg-gray-900 text-white h-[300px]'
             value={encryptedMessage}
             onChange={(e) => setEncryptedMessage(e.target.value)}
             placeholder="Enter text to decrypt..."
-          />
-          <Button size="lg" className="mr-2 mt-4 mb-8" variant='outline'
-            onClick={() => handleDecrypt(encryptedMessage, 'text')}
-          >
-            Decrypt <Key className='w-4 h-4' />
-          </Button>
+          /> */}
+          
 
           <FileUploader
             value={files}
             onValueChange={handleFileUpload}
             dropzoneOptions={dropZoneConfig}
-            className="relative bg-gray-900 rounded-lg p-1"
+            className="relative bg-gray-900 rounded-lg p-1 w-1/2"
           >
             <FileInput className='outline-dashed outline-1 outline-white bg-gray-900'>
               <div className="flex items-center justify-center flex-col pt-3 pb-4 w-full">
@@ -215,6 +219,12 @@ export default function HomePage() {
             </FileUploaderContent>
           </FileUploader>
 
+          <Button size="lg" className="mr-2 mt-8 mb-8" variant='outline'
+            onClick={() => handleDecrypt(encryptedMessage, 'text')}
+          >
+            Decrypt <Key className='w-4 h-4' />
+          </Button>
+
           {error && (
             <Alert variant="destructive" className="mt-4 mb-4">
               <AlertTitle>Error Occurred</AlertTitle>
@@ -223,18 +233,22 @@ export default function HomePage() {
           )}
           
           {decryptedMessage ? (
-            <div className='bg-gray-900 p-6 rounded-lg border border-gray-700 mt-8 relative'>
-              <h2 className="text-blue-500 mb-2">----------------------- Decrypted Message -----------------------</h2>
-              <div className='absolute top-3 right-3 flex space-x-2'>
-                <button
-                  onClick={() => navigator.clipboard.writeText(decryptedMessage)}
-                  className="text-gray-400 hover:text-emerald-500"
-                  title="Copy to clipboard"
-                >
-                  <Copy className="h-5 w-5" />
-                </button>
-                <button onClick={() => setDecryptedMessage('')}><Trash2 className="h-5 w-5 text-white" /></button>
-              </div>
+            <div className='bg-gray-900 p-6 w-1/2 rounded-lg border border-gray-700 mt-8 relative'>  
+
+                <div className='absolute top-3 right-3 flex space-x-2'>
+                  <button onClick={triggerDownload}>
+                    <Download className="h-5 w-5 text-gray-400 hover:text-emerald-500" />
+                  </button>
+                  <button
+                    onClick={() => navigator.clipboard.writeText(decryptedMessage)}
+                    className="text-gray-400 hover:text-emerald-500"
+                    title="Copy to clipboard"
+                  >
+                    <Copy className="h-5 w-5" />
+                  </button>
+                  <button onClick={() => setDecryptedMessage('')}><Trash2 className="h-5 w-5 text-gray-400 hover:text-red-500" /></button>
+                </div>
+
               <div className="h-auto overflow-auto text-gray-300">
                 <p className="whitespace-pre-wrap">{decryptedMessage}</p>
               </div>

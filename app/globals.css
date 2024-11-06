@@ -165,3 +165,29 @@ a {
 .auth-container .amplify-authenticator button:hover {
   background-color: #357ab8; /* Button hover color */
 }
+
+/* DropZone*/
+
+.bg-gray-900 {
+  background-color: #1a1a1a; /* Dark background */
+}
+
+.text-blue-500 {
+  color: #3b82f6; /* Blue text */
+}
+
+.text-gray-300 {
+  color: #d1d5db; /* Light gray text */
+}
+
+.text-gray-400 {
+  color: #9ca3af; /* Medium gray text */
+}
+
+.border-gray-700 {
+  border-color: #374151; /* Darker border */
+}
+
+.border-dashed {
+  border-style: dashed; /* Dashed border */
+}
